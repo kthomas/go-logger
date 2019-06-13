@@ -6,13 +6,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/google/logger"
+	glogger "github.com/google/logger"
 )
 
 type Logger struct {
 	console bool
 	syslog  bool
-	logger  *logger.Logger
+	logger  *glogger.Logger
 	prefix  string
 	logPath *string
 }
@@ -21,15 +21,15 @@ func (lg *Logger) configure() {
 	if lg.logPath != nil {
 		lf, err := os.OpenFile(*lg.logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
 		if err != nil {
-			logger.Fatalf("Failed to open log file: %v", err)
+			glogger.Fatalf("Failed to open log file: %v", err)
 		}
 		defer lf.Close()
 
-		lg.logger = logger.Init(lg.prefix, lg.console, lg.syslog, lf)
+		lg.logger = glogger.Init(lg.prefix, lg.console, lg.syslog, lf)
 	} else {
-		lg.logger = logger.Init(lg.prefix, lg.console, lg.syslog, ioutil.Discard)
+		lg.logger = glogger.Init(lg.prefix, lg.console, lg.syslog, ioutil.Discard)
 	}
-	logger.SetFlags(log.LstdFlags)
+	glogger.SetFlags(log.LstdFlags)
 
 	var logPrefix = lg.prefix
 	if len(lg.prefix) > 0 {
