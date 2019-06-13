@@ -3,9 +3,8 @@ package logger
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
-	"sync"
 	"log"
+	"os"
 
 	"github.com/google/logger"
 )
@@ -20,17 +19,17 @@ type Logger struct {
 
 func (lg *Logger) configure() {
 	if lg.logPath != nil {
-		lf, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
+		lf, err := os.OpenFile(lg.logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
 		if err != nil {
 			logger.Fatalf("Failed to open log file: %v", err)
 		}
 		defer lf.Close()
 
-		lg.logger := logger.Init(lg.prefix, lg.console, lg.syslog, lf)
+		lg.logger = logger.Init(lg.prefix, lg.console, lg.syslog, lf)
 	} else {
-		lg.logger := logger.Init(lg.prefix, lg.console, lg.syslog, ioutil.Discard)
+		lg.logger = logger.Init(lg.prefix, lg.console, lg.syslog, ioutil.Discard)
 	}
-	lg.logger.SetFlags(log.LstdFlags)
+	logger.SetFlags(log.LstdFlags)
 
 	var logPrefix = lg.prefix
 	if len(lg.prefix) > 0 {
@@ -49,35 +48,35 @@ func (lg *Logger) Clone() *Logger {
 }
 
 func (lg *Logger) Critical(msg string) {
-		lg.logger.Fatal(msg)
+	lg.logger.Fatal(msg)
 }
 
 func (lg *Logger) Criticalf(msg string, v ...interface{}) {
-		lg.logger.Fatalf(msg, v...)
+	lg.logger.Fatalf(msg, v...)
 }
 
 func (lg *Logger) Debug(msg string) {
-		lg.logger.Info(msg)
+	lg.logger.Info(msg)
 }
 
 func (lg *Logger) Debugf(msg string, v ...interface{}) {
-		lg.logger.Infof(msg, v...)
+	lg.logger.Infof(msg, v...)
 }
 
 func (lg *Logger) Error(msg string) {
-		lg.logger.Error(msg)
+	lg.logger.Error(msg)
 }
 
 func (lg *Logger) Errorf(msg string, v ...interface{}) {
-		lg.logger.Errorf(msg, v...)
+	lg.logger.Errorf(msg, v...)
 }
 
 func (lg *Logger) Info(msg string) {
-		lg.logger.Info(msg)
+	lg.logger.Info(msg)
 }
 
 func (lg *Logger) Infof(msg string, v ...interface{}) {
-		lg.logger.Infof(msg, v...)
+	lg.logger.Infof(msg, v...)
 }
 
 func (lg *Logger) LogOnError(err error, s string) bool {
@@ -91,14 +90,6 @@ func (lg *Logger) LogOnError(err error, s string) bool {
 		hasErr = true
 	}
 	return hasErr
-}
-
-func (lg *Logger) Notice(msg string) {
-		lg.logger.Notice(msg)
-}
-
-func (lg *Logger) Noticef(msg string, v ...interface{}) {
-		lg.logger.Noticef(msg, v...)
 }
 
 func (lg *Logger) Panicf(msg string, v ...interface{}) {
@@ -116,18 +107,17 @@ func (lg *Logger) PanicOnError(err error, s string) {
 }
 
 func (lg *Logger) Warning(msg string) {
-		lg.logger.Warning(msg)
+	lg.logger.Warning(msg)
 }
 
 func (lg *Logger) Warningf(msg string, v ...interface{}) {
-		lg.logger.Warningf(msg, v...)
+	lg.logger.Warningf(msg, v...)
 }
 
 func NewLogger(prefix string, console bool, syslog bool) *Logger {
 	lg := Logger{}
 	lg.console = console
 	lg.syslog = syslog
-	lg.level = logLevel
 	lg.prefix = prefix
 
 	lg.configure()
