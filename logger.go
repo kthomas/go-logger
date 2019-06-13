@@ -19,7 +19,7 @@ type Logger struct {
 
 func (lg *Logger) configure() {
 	if lg.logPath != nil {
-		lf, err := os.OpenFile(lg.logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
+		lf, err := os.OpenFile(*lg.logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
 		if err != nil {
 			logger.Fatalf("Failed to open log file: %v", err)
 		}
