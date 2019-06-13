@@ -2,105 +2,83 @@ package logger
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
-	"sync"
 
-	"github.com/op/go-logging"
+	glogger "github.com/google/logger"
 )
 
 type Logger struct {
 	console bool
-	level logging.Level
-	logger *logging.Logger
-	mutex *sync.Mutex
-	prefix string
-	template string
+	syslog  bool
+	logger  *glogger.Logger
+	prefix  string
+	logPath *string
 }
 
 func (lg *Logger) configure() {
-	logging.Reset()
+	if lg.logPath != nil {
+		lf, err := os.OpenFile(*lg.logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
+		if err != nil {
+			glogger.Fatalf("Failed to open log file: %v", err)
+		}
+		defer lf.Close()
 
-	formatter, err := logging.NewStringFormatter(lg.template)
-	if err == nil {
-		logging.SetFormatter(formatter)
+		lg.logger = glogger.Init(lg.prefix, lg.console, lg.syslog, lf)
 	} else {
-		logging.SetFormatter(logging.GlogFormatter)
+		lg.logger = glogger.Init(lg.prefix, lg.console, lg.syslog, ioutil.Discard)
 	}
+	glogger.SetFlags(log.LstdFlags)
 
 	var logPrefix = lg.prefix
 	if len(lg.prefix) > 0 {
 		logPrefix = fmt.Sprintf("%s ", logPrefix)
-	}
-
-	if lg.console {
-		backend := logging.NewLogBackend(os.Stdout, logPrefix, 0)
-		logging.SetBackend(backend)
-	} else {
-		syslogBackend, err := logging.NewSyslogBackend(logPrefix)
-		if err != nil {
-			logging.SetBackend(syslogBackend)
-		}
 	}
 }
 
 func (lg *Logger) Clone() *Logger {
 	return &Logger{
 		console: lg.console,
-		level: lg.level,
-		logger: lg.logger,
-		mutex: &sync.Mutex{},
-		prefix: lg.prefix,
-		template: lg.template,
+		syslog:  lg.syslog,
+		logger:  lg.logger,
+		prefix:  lg.prefix,
+		logPath: lg.logPath,
 	}
 }
 
 func (lg *Logger) Critical(msg string) {
-	if lg.level >= logging.CRITICAL {
-		lg.logger.Warning(msg)
-	}
+	lg.logger.Fatal(msg)
 }
 
 func (lg *Logger) Criticalf(msg string, v ...interface{}) {
-	if lg.level >= logging.WARNING {
-		lg.logger.Warningf(msg, v...)
-	}
+	lg.logger.Fatalf(msg, v...)
 }
 
 func (lg *Logger) Debug(msg string) {
-	if lg.level >= logging.DEBUG {
-		lg.logger.Debug(msg)
-	}
+	lg.logger.Info(msg)
 }
 
 func (lg *Logger) Debugf(msg string, v ...interface{}) {
-	if lg.level >= logging.DEBUG {
-		lg.logger.Debugf(msg, v...)
-	}
+	lg.logger.Infof(msg, v...)
 }
 
 func (lg *Logger) Error(msg string) {
-	if lg.level >= logging.ERROR {
-		lg.logger.Error(msg)
-	}
+	lg.logger.Error(msg)
 }
 
 func (lg *Logger) Errorf(msg string, v ...interface{}) {
-	if lg.level >= logging.ERROR {
-		lg.logger.Errorf(msg, v...)
-	}
+	lg.logger.Errorf(msg, v...)
 }
 
 func (lg *Logger) Info(msg string) {
-	if lg.level >= logging.INFO {
-		lg.logger.Info(msg)
-	}
+	lg.logger.Info(msg)
 }
 
 func (lg *Logger) Infof(msg string, v ...interface{}) {
-	if lg.level >= logging.INFO {
-		lg.logger.Infof(msg, v...)
-	}
+	lg.logger.Infof(msg, v...)
 }
+
 func (lg *Logger) LogOnError(err error, s string) bool {
 	hasErr := false
 	if err != nil {
@@ -114,20 +92,8 @@ func (lg *Logger) LogOnError(err error, s string) bool {
 	return hasErr
 }
 
-func (lg *Logger) Notice(msg string) {
-	if lg.level >= logging.NOTICE {
-		lg.logger.Notice(msg)
-	}
-}
-
-func (lg *Logger) Noticef(msg string, v ...interface{}) {
-	if lg.level >= logging.NOTICE {
-		lg.logger.Noticef(msg, v...)
-	}
-}
-
 func (lg *Logger) Panicf(msg string, v ...interface{}) {
-	lg.logger.Panicf(msg, v...)
+	lg.logger.Fatalf(msg, v...)
 }
 
 func (lg *Logger) PanicOnError(err error, s string) {
@@ -140,48 +106,18 @@ func (lg *Logger) PanicOnError(err error, s string) {
 	}
 }
 
-func (lg *Logger) SetTemplate(template string) {
-	lg.mutex.Lock()
-	defer lg.mutex.Unlock()
-	lg.template = template
-	lg.configure()
-}
-
 func (lg *Logger) Warning(msg string) {
-	if lg.level >= logging.WARNING {
-		lg.logger.Warning(msg)
-	}
+	lg.logger.Warning(msg)
 }
 
 func (lg *Logger) Warningf(msg string, v ...interface{}) {
-	if lg.level >= logging.WARNING {
-		lg.logger.Warningf(msg, v...)
-	}
+	lg.logger.Warningf(msg, v...)
 }
 
-func NewLogger(prefix string, level string, console bool) *Logger {
-	var logLevel logging.Level
-
-	switch level {
-	case "CRITICAL":
-		logLevel = logging.CRITICAL
-	case "ERROR":
-		logLevel = logging.ERROR
-	case "WARNING":
-		logLevel = logging.WARNING
-	case "NOTICE":
-		logLevel = logging.NOTICE
-	case "INFO":
-		logLevel = logging.INFO
-	case "DEBUG":
-		logLevel = logging.DEBUG
-	}
-
+func NewLogger(prefix string, _lvl string, console bool) *Logger {
 	lg := Logger{}
 	lg.console = console
-	lg.level = logLevel
-	lg.logger = logging.MustGetLogger(prefix)
-	lg.mutex = &sync.Mutex{}
+	lg.syslog = false
 	lg.prefix = prefix
 
 	lg.configure()
