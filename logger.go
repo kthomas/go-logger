@@ -114,7 +114,7 @@ func (lg *Logger) Warningf(msg string, v ...interface{}) {
 	lg.logger.Warningf(msg, v...)
 }
 
-func NewLogger(prefix string, console bool, syslog bool) *Logger {
+func NewLogger(prefix string, _lvl string, console bool, syslog bool) *Logger {
 	lg := Logger{}
 	lg.console = console
 	lg.syslog = syslog
