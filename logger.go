@@ -53,7 +53,8 @@ func (lg *Logger) Critical(msg string) {
 }
 
 func (lg *Logger) Criticalf(msg string, v ...interface{}) {
-	lg.logger.Fatalf(msg, v...)
+	args := lg.transformParams(v)
+	lg.logger.Fatalf(msg, args...)
 }
 
 func (lg *Logger) Debug(msg string) {
@@ -61,7 +62,8 @@ func (lg *Logger) Debug(msg string) {
 }
 
 func (lg *Logger) Debugf(msg string, v ...interface{}) {
-	lg.logger.Infof(msg, v...)
+	args := lg.transformParams(v)
+	lg.logger.Infof(msg, args...)
 }
 
 func (lg *Logger) Error(msg string) {
@@ -69,7 +71,8 @@ func (lg *Logger) Error(msg string) {
 }
 
 func (lg *Logger) Errorf(msg string, v ...interface{}) {
-	lg.logger.Errorf(msg, v...)
+	args := lg.transformParams(v)
+	lg.logger.Errorf(msg, args...)
 }
 
 func (lg *Logger) Info(msg string) {
@@ -77,7 +80,8 @@ func (lg *Logger) Info(msg string) {
 }
 
 func (lg *Logger) Infof(msg string, v ...interface{}) {
-	lg.logger.Infof(msg, v...)
+	args := lg.transformParams(v)
+	lg.logger.Infof(msg, args...)
 }
 
 func (lg *Logger) LogOnError(err error, s string) bool {
@@ -94,7 +98,8 @@ func (lg *Logger) LogOnError(err error, s string) bool {
 }
 
 func (lg *Logger) Panicf(msg string, v ...interface{}) {
-	lg.logger.Fatalf(msg, v...)
+	args := lg.transformParams(v)
+	lg.logger.Fatalf(msg, args...)
 }
 
 func (lg *Logger) PanicOnError(err error, s string) {
