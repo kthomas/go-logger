@@ -112,7 +112,7 @@ func (lg *Logger) Warning(msg string) {
 }
 
 func (lg *Logger) Warningf(msg string, v ...interface{}) {
-	args = lg.transformParams(v)
+	args := lg.transformParams(v)
 	lg.logger.Warningf(msg, args...)
 }
 
