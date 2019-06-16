@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 
 	glogger "github.com/google/logger"
 )
@@ -111,7 +112,20 @@ func (lg *Logger) Warning(msg string) {
 }
 
 func (lg *Logger) Warningf(msg string, v ...interface{}) {
-	lg.logger.Warningf(msg, v...)
+	args = lg.transformParams(v)
+	lg.logger.Warningf(msg, args...)
+}
+
+func (lg *Logger) transformParams(v []interface{}) []interface{} {
+	args := []interface{}{}
+	for _, a := range v {
+		if reflect.ValueOf(a).Kind() == reflect.Ptr {
+			args = append(args, reflect.ValueOf(a).Elem())
+		} else {
+			args = append(args, a)
+		}
+	}
+	return args
 }
 
 func NewLogger(prefix string, _lvl string, console bool) *Logger {
