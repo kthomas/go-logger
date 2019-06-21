@@ -7,7 +7,7 @@ import (
 	"os"
 	"reflect"
 
-	glogger "github.com/google/logger"
+	glogger "github.com/maratk/logger"
 )
 
 type Logger struct {
