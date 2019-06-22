@@ -8,6 +8,7 @@ import (
 	"reflect"
 
 	glogger "github.com/maratk/logger"
+	"github.com/op/go-logging"
 )
 
 type Logger struct {
@@ -15,6 +16,7 @@ type Logger struct {
 	syslog  bool
 	logger  *glogger.Logger
 	prefix  string
+	level   logging.Level
 	logPath *string
 }
 
@@ -49,39 +51,71 @@ func (lg *Logger) Clone() *Logger {
 }
 
 func (lg *Logger) Critical(msg string) {
-	lg.logger.Fatal(msg)
+	critical, _ := logging.LogLevel("CRITICAL")
+	if lg.level >= critical {
+		str := lg.addPrefix(msg)
+		lg.logger.Fatal(str)
+	}
 }
 
 func (lg *Logger) Criticalf(msg string, v ...interface{}) {
-	args := lg.transformParams(v)
-	lg.logger.Fatalf(msg, args...)
+	critical, _ := logging.LogLevel("CRITICAL")
+	if lg.level >= critical {
+		args := lg.transformParams(v)
+		str := lg.addPrefix(msg)
+		lg.logger.Fatalf(str, args...)
+	}
 }
 
 func (lg *Logger) Debug(msg string) {
-	lg.logger.Info(msg)
+	debug, _ := logging.LogLevel("DEBUG")
+	if lg.level >= debug {
+		str := lg.addPrefix(msg)
+		lg.logger.Info(str)
+	}
 }
 
 func (lg *Logger) Debugf(msg string, v ...interface{}) {
-	args := lg.transformParams(v)
-	lg.logger.Infof(msg, args...)
+	debug, _ := logging.LogLevel("DEBUG")
+	if lg.level >= debug {
+		args := lg.transformParams(v)
+		str := lg.addPrefix(msg)
+		lg.logger.Infof(str, args...)
+	}
 }
 
 func (lg *Logger) Error(msg string) {
-	lg.logger.Error(msg)
+	err, _ := logging.LogLevel("ERROR")
+	if lg.level >= err {
+		str := lg.addPrefix(msg)
+		lg.logger.Error(str)
+	}
 }
 
 func (lg *Logger) Errorf(msg string, v ...interface{}) {
-	args := lg.transformParams(v)
-	lg.logger.Errorf(msg, args...)
+	err, _ := logging.LogLevel("ERROR")
+	if lg.level >= err {
+		args := lg.transformParams(v)
+		str := lg.addPrefix(msg)
+		lg.logger.Errorf(str, args...)
+	}
 }
 
 func (lg *Logger) Info(msg string) {
-	lg.logger.Info(msg)
+	info, _ := logging.LogLevel("INFO")
+	if lg.level >= info {
+		str := lg.addPrefix(msg)
+		lg.logger.Info(str)
+	}
 }
 
 func (lg *Logger) Infof(msg string, v ...interface{}) {
-	args := lg.transformParams(v)
-	lg.logger.Infof(msg, args...)
+	info, _ := logging.LogLevel("INFO")
+	if lg.level >= info {
+		args := lg.transformParams(v)
+		str := lg.addPrefix(msg)
+		lg.logger.Infof(str, args...)
+	}
 }
 
 func (lg *Logger) LogOnError(err error, s string) bool {
@@ -98,8 +132,7 @@ func (lg *Logger) LogOnError(err error, s string) bool {
 }
 
 func (lg *Logger) Panicf(msg string, v ...interface{}) {
-	args := lg.transformParams(v)
-	lg.logger.Fatalf(msg, args...)
+	lg.Criticalf(msg, v...)
 }
 
 func (lg *Logger) PanicOnError(err error, s string) {
@@ -108,19 +141,30 @@ func (lg *Logger) PanicOnError(err error, s string) {
 		if s != "" {
 			msg = fmt.Sprintf("%s; %s", msg, s)
 		}
-		lg.Panicf(msg)
+		lg.Criticalf(msg)
 	}
 }
 
 func (lg *Logger) Warning(msg string) {
-	lg.logger.Warning(msg)
+	warning, _ := logging.LogLevel("WARNING")
+	if lg.level >= warning {
+		str := lg.addPrefix(msg)
+		lg.logger.Warning(str)
+	}
 }
 
 func (lg *Logger) Warningf(msg string, v ...interface{}) {
-	args := lg.transformParams(v)
-	lg.logger.Warningf(msg, args...)
+	warning, _ := logging.LogLevel("WARNING")
+	if lg.level >= warning {
+		args := lg.transformParams(v)
+		str := lg.addPrefix(msg)
+		lg.logger.Warningf(str, args...)
+	}
 }
 
+func (lg *Logger) addPrefix(msg string) string {
+	return fmt.Sprintf("%s %s", lg.prefix, msg)
+}
 func (lg *Logger) transformParams(v []interface{}) []interface{} {
 	args := []interface{}{}
 	for _, a := range v {
@@ -133,11 +177,12 @@ func (lg *Logger) transformParams(v []interface{}) []interface{} {
 	return args
 }
 
-func NewLogger(prefix string, _lvl string, console bool) *Logger {
+func NewLogger(prefix string, lvl string, console bool) *Logger {
 	lg := Logger{}
 	lg.console = console
 	lg.syslog = false
 	lg.prefix = prefix
+	lg.level, _ = logging.LogLevel(lvl)
 
 	lg.configure()
 
