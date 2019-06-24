@@ -53,8 +53,7 @@ func (lg *Logger) Clone() *Logger {
 func (lg *Logger) Critical(msg string) {
 	critical, _ := logging.LogLevel("CRITICAL")
 	if lg.level >= critical {
-		str := lg.addPrefix(msg)
-		lg.logger.Fatal(str)
+		lg.logger.Fatal(msg)
 	}
 }
 
@@ -62,16 +61,14 @@ func (lg *Logger) Criticalf(msg string, v ...interface{}) {
 	critical, _ := logging.LogLevel("CRITICAL")
 	if lg.level >= critical {
 		args := lg.transformParams(v)
-		str := lg.addPrefix(msg)
-		lg.logger.Fatalf(str, args...)
+		lg.logger.Fatalf(msg, args...)
 	}
 }
 
 func (lg *Logger) Debug(msg string) {
 	debug, _ := logging.LogLevel("DEBUG")
 	if lg.level >= debug {
-		str := lg.addPrefix(msg)
-		lg.logger.Info(str)
+		lg.logger.Info(msg)
 	}
 }
 
@@ -79,16 +76,14 @@ func (lg *Logger) Debugf(msg string, v ...interface{}) {
 	debug, _ := logging.LogLevel("DEBUG")
 	if lg.level >= debug {
 		args := lg.transformParams(v)
-		str := lg.addPrefix(msg)
-		lg.logger.Infof(str, args...)
+		lg.logger.Infof(msg, args...)
 	}
 }
 
 func (lg *Logger) Error(msg string) {
 	err, _ := logging.LogLevel("ERROR")
 	if lg.level >= err {
-		str := lg.addPrefix(msg)
-		lg.logger.Error(str)
+		lg.logger.Error(msg)
 	}
 }
 
@@ -96,16 +91,14 @@ func (lg *Logger) Errorf(msg string, v ...interface{}) {
 	err, _ := logging.LogLevel("ERROR")
 	if lg.level >= err {
 		args := lg.transformParams(v)
-		str := lg.addPrefix(msg)
-		lg.logger.Errorf(str, args...)
+		lg.logger.Errorf(msg, args...)
 	}
 }
 
 func (lg *Logger) Info(msg string) {
 	info, _ := logging.LogLevel("INFO")
 	if lg.level >= info {
-		str := lg.addPrefix(msg)
-		lg.logger.Info(str)
+		lg.logger.Info(msg)
 	}
 }
 
@@ -113,8 +106,7 @@ func (lg *Logger) Infof(msg string, v ...interface{}) {
 	info, _ := logging.LogLevel("INFO")
 	if lg.level >= info {
 		args := lg.transformParams(v)
-		str := lg.addPrefix(msg)
-		lg.logger.Infof(str, args...)
+		lg.logger.Infof(msg, args...)
 	}
 }
 
@@ -148,8 +140,7 @@ func (lg *Logger) PanicOnError(err error, s string) {
 func (lg *Logger) Warning(msg string) {
 	warning, _ := logging.LogLevel("WARNING")
 	if lg.level >= warning {
-		str := lg.addPrefix(msg)
-		lg.logger.Warning(str)
+		lg.logger.Warning(msg)
 	}
 }
 
@@ -157,14 +148,10 @@ func (lg *Logger) Warningf(msg string, v ...interface{}) {
 	warning, _ := logging.LogLevel("WARNING")
 	if lg.level >= warning {
 		args := lg.transformParams(v)
-		str := lg.addPrefix(msg)
-		lg.logger.Warningf(str, args...)
+		lg.logger.Warningf(msg, args...)
 	}
 }
 
-func (lg *Logger) addPrefix(msg string) string {
-	return fmt.Sprintf("%s %s", lg.prefix, msg)
-}
 func (lg *Logger) transformParams(v []interface{}) []interface{} {
 	args := []interface{}{}
 	for _, a := range v {
