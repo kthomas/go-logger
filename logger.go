@@ -3,7 +3,6 @@ package logger
 import (
 	"fmt"
 	"log/syslog"
-	"net"
 	"os"
 	"strings"
 
@@ -17,11 +16,11 @@ type Logger struct {
 	logger         *log.Logger
 	path           *string
 	prefix         string
-	syslogEndpoint *net.Addr
+	syslogEndpoint *string
 }
 
 // NewLogger initialize logger instance
-func NewLogger(prefix string, lvl string, endpoint *net.Addr) *Logger {
+func NewLogger(prefix string, lvl string, endpoint *string) *Logger {
 	lg := Logger{}
 	lg.lvl = lvl
 	lg.prefix = fmt.Sprintf("%s ", strings.Trim(prefix, " "))
@@ -52,13 +51,11 @@ func (lg *Logger) configure() {
 
 		logger.Out = logfile
 	} else if lg.syslogEndpoint != nil {
-		// lg.logger = glogger.Init(lg.prefix, lg.console, lg.syslog, ioutil.Discard)
-
-		hook, err := sysloghook.NewSyslogHook("udp", (*lg.syslogEndpoint).String(), syslog.LOG_INFO, lg.prefix)
+		hook, err := sysloghook.NewSyslogHook("udp", *lg.syslogEndpoint, syslog.LOG_INFO, lg.prefix)
 		if err != nil {
 			log.Errorf("unable to dial syslog daemon; %s", err.Error())
 		} else {
-			log.AddHook(hook)
+			logger.AddHook(hook)
 		}
 	} else {
 		log.Debugf("using stdout for new logger instance")
