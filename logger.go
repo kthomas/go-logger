@@ -37,7 +37,7 @@ func (lg *Logger) configure() {
 
 	logLevel, err := log.ParseLevel(lg.lvl)
 	if err != nil {
-		log.Warningf("failed to parse log level %s; %s", lg.lvl, err.Error())
+		logger.Warningf("failed to parse log level %s; %s", lg.lvl, err.Error())
 	} else {
 		logger.Level = logLevel
 	}
@@ -45,7 +45,7 @@ func (lg *Logger) configure() {
 	if lg.path != nil {
 		logfile, err := os.OpenFile(*lg.path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
 		if err != nil {
-			log.Warningf("failed to open log file destination path: %s; %s", *lg.path, err.Error())
+			logger.Warningf("failed to open log file destination path: %s; %s", *lg.path, err.Error())
 		}
 		defer logfile.Close()
 
@@ -58,9 +58,11 @@ func (lg *Logger) configure() {
 			logger.AddHook(hook)
 		}
 	} else {
-		log.Debugf("using stdout for new logger instance")
-		logger.Out = os.Stdout
+		logger.Debugf("using stderr for new logger instance")
+		logger.Out = os.Stderr
 	}
+
+	lg.logger = logger
 }
 
 // Clone a logger instance
