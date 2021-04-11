@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-	sysloghook "github.com/sirupsen/logrus/hooks/syslog"
+	log "github.com/kthomas/logrus"
+	sysloghook "github.com/kthomas/logrus/hooks/syslog"
 )
 
 // Logger instance

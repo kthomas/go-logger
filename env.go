@@ -3,7 +3,7 @@ package logger
 import (
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	log "github.com/kthomas/logrus"
 )
 
 var defaultLogFormatter log.Formatter
