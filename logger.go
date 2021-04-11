@@ -2,13 +2,14 @@ package logger
 
 import (
 	"fmt"
-	"log/syslog"
 	"os"
 	"strings"
 
 	log "github.com/kthomas/logrus"
 	sysloghook "github.com/kthomas/logrus/hooks/syslog"
 )
+
+const syslogInfoPriority = 6
 
 // Logger instance
 type Logger struct {
@@ -51,7 +52,7 @@ func (lg *Logger) configure() {
 
 		logger.Out = logfile
 	} else if lg.syslogEndpoint != nil {
-		hook, err := sysloghook.NewSyslogHook("udp", *lg.syslogEndpoint, syslog.LOG_INFO, lg.prefix)
+		hook, err := sysloghook.NewSyslogHook("udp", *lg.syslogEndpoint, syslogInfoPriority, lg.prefix)
 		if err != nil {
 			log.Errorf("unable to dial syslog daemon; %s", err.Error())
 		} else {
