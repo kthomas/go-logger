@@ -1,8 +1,8 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/kthomas/logrus v1.8.2-0.20210411033244-b016120ba3fa h1:nAbBvpDu0akVnvx9Ez+ebNP56h1S2JFTiZM1JCg6jlc=
-github.com/kthomas/logrus v1.8.2-0.20210411033244-b016120ba3fa/go.mod h1:Ik/HFmBi2zLl3r5G0STfy5dg80oXLm4B0cVTyiTc3nw=
+github.com/kthomas/logrus v1.8.2-0.20210411034302-11586d6ce483 h1:ExiGazJPdhftNnvVsxWHsbPNIuWxpjLE2IJttEkFzn4=
+github.com/kthomas/logrus v1.8.2-0.20210411034302-11586d6ce483/go.mod h1:Ik/HFmBi2zLl3r5G0STfy5dg80oXLm4B0cVTyiTc3nw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
