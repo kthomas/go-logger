@@ -59,7 +59,7 @@ func (lg *Logger) configure() {
 			logger.AddHook(hook)
 		}
 	} else {
-		logger.Debugf("using stderr for new logger instance")
+		logger.Tracef("using stderr for new logger instance")
 		logger.Out = os.Stderr
 	}
 
